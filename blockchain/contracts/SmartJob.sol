@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.24;
 
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+
 // Uncomment this line to use console.log
 // import "hardhat/console.sol";
 
-contract SmartJob {
-
+contract SmartJob is Ownable {
+    constructor(address initialOwner) Ownable(initialOwner) {}
 }

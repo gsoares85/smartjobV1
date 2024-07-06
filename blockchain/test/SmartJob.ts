@@ -15,7 +15,7 @@ describe("SmartJob", function () {
         ] = await hre.ethers.getSigners();
 
         const SmartJob = await hre.ethers.getContractFactory("SmartJob");
-        const smartJob = await SmartJob.deploy();
+        const smartJob = await SmartJob.deploy(owner);
 
         return {smartJob, owner, company1, company2, person1, person2, person3};
     }
@@ -25,6 +25,7 @@ describe("SmartJob", function () {
             const {smartJob, owner} = await deploy();
 
             expect(await smartJob.getAddress()).to.exist;
+            expect(await smartJob.owner()).to.equal(owner);
         });
     });
 });
