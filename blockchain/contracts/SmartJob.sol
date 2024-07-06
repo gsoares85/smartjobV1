@@ -8,4 +8,8 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 contract SmartJob is Ownable {
     constructor(address initialOwner) Ownable(initialOwner) {}
+
+    function version() public pure returns (string memory) {
+        return "1.0.0";
+    }
 }

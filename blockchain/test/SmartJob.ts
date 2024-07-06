@@ -20,12 +20,16 @@ describe("SmartJob", function () {
         return {smartJob, owner, company1, company2, person1, person2, person3};
     }
 
-    describe("Deployment", function () {
+    describe("Deployment V1", function () {
         it("Should deploy the contract", async function () {
             const {smartJob, owner} = await deploy();
 
             expect(await smartJob.getAddress()).to.exist;
             expect(await smartJob.owner()).to.equal(owner);
         });
+        it("Should validate version", async function () {
+            const {smartJob} = await deploy();
+            expect(await smartJob.version()).to.equal("1.0.0");
+        })
     });
 });
