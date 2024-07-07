@@ -1,8 +1,8 @@
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 
-const SmartJobModule = buildModule("SmartJobModule", (m) => {
+const SmartJobModule = buildModule("SmartJobV1Module", (m) => {
   const owner = m.getAccount(0);
-  const smartJob = m.contract("SmartJob", [owner]);
+  const smartJob = m.contract("SmartJobV1", [owner]);
 
   const proxy = m.contract("TransparentUpgradeableProxy", [
       smartJob,

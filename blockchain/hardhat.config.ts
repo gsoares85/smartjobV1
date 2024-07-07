@@ -10,6 +10,7 @@ const config: HardhatUserConfig = {
       url: process.env.RPC_URL,
       chainId: 31,
       accounts: [process.env.PRIVATE_KEY || ""],
+      timeout: 3600
     }
   }
 };
