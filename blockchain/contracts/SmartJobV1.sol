@@ -10,6 +10,7 @@ contract SmartJobV1 is Ownable {
     uint private companyId;
 
     event CompanyRegistered(uint indexed companyId, address companyAdmin);
+    event CompanyUpdated(uint indexed companyId, address companyAdmin);
 
     struct Company {
         uint id;
@@ -28,6 +29,7 @@ contract SmartJobV1 is Ownable {
     error EmptyString(string field, string msg);
     error AlreadyRegistered(string method, string message);
     error CompanyNotFound(uint ID, string message);
+    error OnlyCompanyAdmin(address sender, address admin, string message);
 
     constructor(address initialOwner) Ownable(initialOwner) {}
 
@@ -62,5 +64,22 @@ contract SmartJobV1 is Ownable {
         }
 
         return comp;
+    }
+
+    function updateCompany(uint _id, string memory _name, string memory _description, string memory _activityBranch, uint _employeesNumber) public {
+        Company storage comp = companies[_id];
+        if (_id > companyId || comp.id == 0) {
+            revert CompanyNotFound(_id, "Company not found");
+        }
+        if (comp.admin != msg.sender) {
+            revert OnlyCompanyAdmin(msg.sender, comp.admin, "Only admin can perform this change");
+        }
+
+        comp.name = _name;
+        comp.description = _description;
+        comp.activityBranch = _activityBranch;
+        comp.employeesNumber = _employeesNumber;
+
+        emit CompanyUpdated(comp.id, comp.admin);
     }
 }

@@ -78,4 +78,40 @@ describe("SmartJobV1", function () {
                 .withArgs(5, "Company not found");
         });
     });
+    describe("Update company", function ()  {
+        it("Should update company", async function () {
+            const {smartJob, company1} = await deploy();
+            expect(await smartJob.connect(company1).registerCompany("Sky Net", "", "robotics", 5))
+                .to.emit(smartJob, "CompanyRegistered");
+            expect((await smartJob.getCompanyById(1))[0].toString()).to.equal("1");
+            expect((await smartJob.getCompanyById(1))[1]).to.equal(await company1.getAddress());
+            expect((await smartJob.getCompanyById(1))[2]).to.equal("Sky Net");
+            expect((await smartJob.getCompanyById(1))[3]).to.equal("");
+            expect((await smartJob.getCompanyById(1))[4]).to.equal("robotics");
+            expect((await smartJob.getCompanyById(1))[5].toString()).to.equal("5");
+            expect(await smartJob.connect(company1).updateCompany(1, "Sky Net Updated", "Now has description", "Robotics", 50))
+                .to.emit(smartJob, "CompanyUpdated")
+                .withArgs(1, await company1.getAddress());
+            expect((await smartJob.getCompanyById(1))[0].toString()).to.equal("1");
+            expect((await smartJob.getCompanyById(1))[1]).to.equal(await company1.getAddress());
+            expect((await smartJob.getCompanyById(1))[2]).to.equal("Sky Net Updated");
+            expect((await smartJob.getCompanyById(1))[3]).to.equal("Now has description");
+            expect((await smartJob.getCompanyById(1))[4]).to.equal("Robotics");
+            expect((await smartJob.getCompanyById(1))[5].toString()).to.equal("50");
+        });
+        it("Should fail with invalid ID", async function () {
+            const {smartJob, company1} = await deploy();
+            await expect(smartJob.connect(company1).updateCompany(5, "Sky Net", "", "robotics", 5))
+                .to.revertedWithCustomError(smartJob, "CompanyNotFound")
+                .withArgs(5, "Company not found");
+        });
+        it("Should fail with invalid admin", async function () {
+            const {smartJob, company1, company2} = await deploy();
+            expect(await smartJob.connect(company1).registerCompany("Sky Net", "", "robotics", 5))
+                .to.emit(smartJob, "CompanyRegistered");
+            await expect(smartJob.connect(company2).updateCompany(1, "Sky Net", "", "robotics", 5))
+                .to.revertedWithCustomError(smartJob, "OnlyCompanyAdmin")
+                .withArgs(await company2.getAddress(), await company1.getAddress(), "Only admin can perform this change");
+        });
+    });
 });
