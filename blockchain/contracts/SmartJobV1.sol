@@ -27,6 +27,7 @@ contract SmartJobV1 is Ownable {
 
     error EmptyString(string field, string msg);
     error AlreadyRegistered(string method, string message);
+    error CompanyNotFound(uint ID, string message);
 
     constructor(address initialOwner) Ownable(initialOwner) {}
 
@@ -51,5 +52,14 @@ contract SmartJobV1 is Ownable {
         comp.activityBranch = _activityBranch;
 
         emit CompanyRegistered(companyId, msg.sender);
+    }
+
+    function getCompanyById(uint _id) public view returns (Company memory) {
+        Company memory comp = companies[_id];
+        if (_id > companyId || comp.id == 0) {
+            revert CompanyNotFound(_id, "Company not found");
+        }
+
+        return comp;
     }
 }

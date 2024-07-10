@@ -2,6 +2,7 @@ import {anyValue} from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import {expect} from "chai";
 import hre from "hardhat";
 import SmartJobModule from "../ignition/modules/SmartJob";
+import {ethers} from "ethers";
 
 describe("SmartJobV1", function () {
     async function deploy() {
@@ -54,6 +55,26 @@ describe("SmartJobV1", function () {
             await expect(smartJob.connect(company1).registerCompany("Sky Net", "world domination company", ""))
                 .to.revertedWithCustomError(smartJob, "EmptyString")
                 .withArgs("activityBranch", "Company activity branch is mandatory");
+        });
+    });
+    describe("Get company details by ID", function () {
+        it("Should get a company by ID", async function () {
+            const {smartJob, company1} = await deploy();
+            expect(await smartJob.connect(company1).registerCompany("Sky Net", "", "robotics"))
+                .to.emit(smartJob, "CompanyRegistered");
+            expect((await smartJob.getCompanyById(1))[0].toString()).to.equal("1");
+            expect((await smartJob.getCompanyById(1))[1]).to.equal(await company1.getAddress());
+            expect((await smartJob.getCompanyById(1))[2]).to.equal("Sky Net");
+            expect((await smartJob.getCompanyById(1))[3]).to.equal("");
+            expect((await smartJob.getCompanyById(1))[4]).to.equal("robotics");
+        });
+        it("Should fail with invalid ID", async function () {
+            const {smartJob, company1} = await deploy();
+            expect(await smartJob.connect(company1).registerCompany("Sky Net", "", "robotics"))
+                .to.emit(smartJob, "CompanyRegistered");
+            await expect(smartJob.getCompanyById(5)).to
+                .revertedWithCustomError(smartJob, "CompanyNotFound")
+                .withArgs(5, "Company not found");
         });
     });
 });
