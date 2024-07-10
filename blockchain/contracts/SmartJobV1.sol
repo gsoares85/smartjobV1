@@ -35,7 +35,7 @@ contract SmartJobV1 is Ownable {
         return "1.0.0";
     }
 
-    function registerCompany(string memory _name, string memory _description, string memory _activityBranch) public {
+    function registerCompany(string memory _name, string memory _description, string memory _activityBranch, uint _employeesNumber) public {
         if (keccak256(abi.encodePacked("")) == keccak256(abi.encodePacked(_name))) {
             revert EmptyString("name", "Company name is mandatory");
         }
@@ -50,6 +50,7 @@ contract SmartJobV1 is Ownable {
         comp.name = _name;
         comp.description = _description;
         comp.activityBranch = _activityBranch;
+        comp.employeesNumber = _employeesNumber;
 
         emit CompanyRegistered(companyId, msg.sender);
     }
